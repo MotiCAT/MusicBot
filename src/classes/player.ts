@@ -3,9 +3,9 @@ import { client } from '../index';
 import type { Queue } from './queue';
 import { queueManager } from './queue';
 import { joinVoiceChannel, createAudioPlayer } from '@discordjs/voice';
-import { createAudioResource, StreamType, AudioPlayerStatus } from '@discordjs/voice';
+import { createAudioResource, StreamType, AudioPlayerStatus, DiscordGatewayAdapterCreator } from '@discordjs/voice';
+import ytdl from '@distube/ytdl-core';
 import { Snowflake, VoiceBasedChannel } from 'discord.js';
-import ytdl from 'ytdl-core';
 
 export class YTPlayer {
 	private connection: import('@discordjs/voice').VoiceConnection;
@@ -21,7 +21,7 @@ export class YTPlayer {
 		this.serverId = serverId;
 		this.messageChannelId = messageChannelId;
 		this.connection = joinVoiceChannel({
-			adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+			adapterCreator: voiceChannel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
 			channelId: voiceChannel.id,
 			guildId: serverId,
 			selfDeaf: true,
@@ -99,7 +99,9 @@ export class YTPlayer {
 
 	private async fetchSongData() {
 		const channel = client.channels.cache.get(this.messageChannelId);
-		if (!channel) return;
-		if (channel.isTextBased()) channel.send(await getSongInfo(this.queue.currentSong!));
+		if (!channel || !channel.isTextBased()) return;
+		if (channel.isTextBased() && 'send' in channel) {
+			await channel.send(await getSongInfo(this.queue.currentSong!));
+		}
 	}
 }
