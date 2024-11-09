@@ -1,7 +1,7 @@
 import { format_count, seconds_to_time } from '../Utils/NumberUtil';
 import { client } from '../index';
 import { Builder } from './Builder';
-import ytdl from 'ytdl-core';
+import ytdl from '@distube/ytdl-core';
 
 export function songResolver(info: ytdl.videoInfo, requestedBy?: string, requestedByAvatar?: string) {
 	return {

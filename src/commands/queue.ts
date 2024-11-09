@@ -2,8 +2,8 @@ import { songResolver } from '../Utils/songResolver';
 import { Queue, queueManager } from '../classes/queue';
 import { embeds } from '../embeds';
 import { client } from '../index';
+import ytdl from '@distube/ytdl-core';
 import { Message } from 'discord.js';
-import ytdl from 'ytdl-core';
 
 export async function queueCommand(message: Message) {
 	const player = client?.player;
