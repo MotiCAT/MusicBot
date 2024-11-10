@@ -94,7 +94,7 @@ export class YTPlayer {
 		if (this.queue.loop === 'queue') this.queue.loopQueue();
 		if (this.queue.loop === 'track') this.queue.loopTrack();
 		this.play();
-		await this.fetchSongData();
+		return await this.fetchSongData();
 	}
 
 	private async fetchSongData() {

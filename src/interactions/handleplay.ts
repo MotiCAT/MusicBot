@@ -30,7 +30,6 @@ export async function searchPlayCommand(interaction: StringSelectMenuInteraction
 	if (!ytdl.validateURL(url)) return interaction.reply(embeds.invaildUrl);
 	if (!channel) return interaction.reply(embeds.voiceChannelJoin);
 	if (channel.type !== ChannelType.GuildVoice) return;
-	if (!channel.joinable) return interaction.reply(embeds.voiceChannnelJoined);
 	if (!channel.speakable) return interaction.reply(embeds.voiceChannnelPermission);
 
 	if (!queue.length || !player.isPlaying) {

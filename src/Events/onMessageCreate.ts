@@ -18,10 +18,6 @@ export async function onMessageCreate(message: Message): Promise<Awaitable<void>
 		return;
 	}
 	if (channel.type !== ChannelType.GuildVoice) return;
-	if (!channel.joinable) {
-		message.reply(embeds.voiceChannnelJoined);
-		return;
-	}
 	if (!channel.speakable) {
 		message.reply(embeds.voiceChannnelPermission);
 		return;
