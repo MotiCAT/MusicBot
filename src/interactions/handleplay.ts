@@ -2,8 +2,8 @@ import { YTPlayer } from '../classes/player';
 import { Queue, queueManager } from '../classes/queue';
 import { embeds } from '../embeds';
 import { client } from '../index';
+import ytdl from '@distube/ytdl-core';
 import { StringSelectMenuInteraction, ChannelType, VoiceBasedChannel, GuildMember } from 'discord.js';
-import ytdl from 'ytdl-core';
 
 let url: string;
 

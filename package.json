@@ -1,10 +1,10 @@
 {
 	"name": "tunenekosync",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "MusicBot",
 	"main": "index.js",
 	"engines": {
-		"node": ">=18.x"
+		"node": ">=22.x"
 	},
 	"scripts": {
 		"test": "ts-node src/index.ts",
@@ -24,23 +24,25 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
-		"@typescript-eslint/eslint-plugin": "^6.13.1",
-		"@typescript-eslint/parser": "^6.13.1",
-		"eslint": "^8.54.0",
+		"@typescript-eslint/eslint-plugin": "^6.21.0",
+		"@typescript-eslint/parser": "^6.21.0",
+		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^9.1.0",
-		"prettier": "^3.1.0",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.3.2"
+		"prettier": "^3.3.3",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.6.3"
 	},
 	"dependencies": {
 		"@discordjs/opus": "^0.9.0",
 		"@discordjs/voice": "^0.16.1",
-		"discord.js": "^14.14.1",
-		"dotenv": "^16.3.1",
+		"@distube/ytdl-core": "^4.15.1",
+		"discord.js": "^14.16.3",
+		"dotenv": "^16.4.5",
 		"ffmpeg-static": "^5.2.0",
+		"node-cache": "^5.1.2",
 		"tweetnacl": "^1.0.3",
-		"youtube-sr": "^4.3.10",
-		"ytdl-core": "^4.11.5"
+		"youtube-sr": "^4.3.11",
+		"ytpl": "^2.3.0"
 	},
 	"repository": {
 		"type": "git",

@@ -1,7 +1,7 @@
 import { songResolver } from '../Utils/songResolver';
 import { embeds } from '../embeds';
+import ytdl from '@distube/ytdl-core';
 import { Message } from 'discord.js';
-import ytdl from 'ytdl-core';
 
 export async function debugCommand(message: Message) {
 	const url = message.content.split(' ')[1];
