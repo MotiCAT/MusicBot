@@ -29,15 +29,17 @@ export async function playCommand(interaction: ChatInputCommandInteraction) {
 	if (!url) return interaction.reply(embeds.noUrl);
 	if (!channel) return interaction.reply(embeds.voiceChannelJoin);
 	if (channel.type !== ChannelType.GuildVoice) return;
-	if (!channel.joinable) return interaction.reply(embeds.voiceChannnelJoined);
 	if (!channel.speakable) return interaction.reply(embeds.voiceChannnelPermission);
 
 	// Check if URL is a playlist
 	if (ytpl.validateID(url)) {
-		const playlist = await ytpl(url);
+		await interaction.deferReply();
+		const playlist = await ytpl(url, {
+			limit: Infinity
+		});
 		for (const video of playlist.items) queue.addSong(video.url);
 
-		interaction.reply(
+		interaction.editReply(
 			new embeds.embed()
 				.setTitle('Playlist Added')
 				.setDescription(`**${playlist.title}** を再生キューに追加しました。`)
