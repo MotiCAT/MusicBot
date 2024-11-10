@@ -17,10 +17,36 @@ export function songResolver(info: ytdl.videoInfo, requestedBy?: string, request
 	};
 }
 
+export function formatProgressBar(current: number, total: number, barLength: number = 20): string {
+    const progress = Math.round((current / total) * barLength);
+    const empty = Math.max(barLength - progress, 0);  // `empty` が負にならないように修正
+    const filled = '█'.repeat(progress); // 進行中部分（█）
+    const unfilled = '░'.repeat(empty); // 残り部分（░）
+
+    return `${seconds_to_time(current)} [${filled}${unfilled}] ${seconds_to_time(total)} (${Math.round((current / total) * 100)}%)`;
+}
+
+
 export async function getSongInfo(url: string) {
 	const info = await ytdl.getInfo(url);
 	const song = songResolver(info);
-	const currentDuration = seconds_to_time(Math.round(Number(client.player?.resource?.playbackDuration) / 1000));
+
+	// currentDuration が undefined または NaN の場合、デフォルトで 0 を設定
+	const currentDuration = Number(client.player?.resource?.playbackDuration) ? Math.round(Number(client.player?.resource?.playbackDuration) / 1000) : 0;
+	const totalDuration = Number(info.videoDetails.lengthSeconds);
+
+	const progressBar = formatProgressBar(currentDuration, totalDuration);
+
+	// 次の曲がキューにあるか確認
+	const nextSong = (await ytdl.validateURL(client.player?.queue.store[1] as string))
+		? await ytdl.getInfo(client.player?.queue.store[1] as string)
+		: null;
+
+	let footerText = '次の曲はありません';
+	if (nextSong) {
+		const nextSongInfo = songResolver(nextSong);
+		footerText = `次の曲: ${nextSongInfo.title}`;
+	}
 
 	const embed = new Builder()
 		.setTitle(song.title)
@@ -30,9 +56,10 @@ export async function getSongInfo(url: string) {
 			{ name: '投稿者', value: `[${song.author}](${song.authorUrl})` },
 			{ name: '再生時間', value: song.duration, inline: true },
 			{ name: '再生回数', value: song.views, inline: true },
-			{ name: '現在の位置', value: currentDuration, inline: false }
+			{ name: '再生位置', value: progressBar, inline: false }
 		)
-		.setColor('Green');
+		.setColor('Green')
+		.setFooter({ text: footerText });
 
 	return embed.build();
 }
