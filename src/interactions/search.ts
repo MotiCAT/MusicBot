@@ -8,7 +8,7 @@ import {
 import ytsr from 'youtube-sr';
 
 export async function searchCommand(interaction: ChatInputCommandInteraction) {
-	interaction.deferReply();
+	await interaction.deferReply();
 	const videos = await ytsr.search(interaction.options.getString('query') as string, {
 		type: 'video'
 	});

@@ -8,6 +8,7 @@ import { StringSelectMenuInteraction, ChannelType, VoiceBasedChannel, GuildMembe
 let url: string;
 
 export async function searchPlayCommand(interaction: StringSelectMenuInteraction) {
+	await interaction.deferReply();
 	let player = client?.player;
 	if (!queueManager.getQueue(interaction.guild?.id as string)) {
 		queueManager.setQueue(interaction.guild?.id as string, new Queue());
@@ -35,7 +36,7 @@ export async function searchPlayCommand(interaction: StringSelectMenuInteraction
 	if (!queue.length || !player.isPlaying) {
 		queue.addSong(url);
 		const info = await ytdl.getInfo(url);
-		interaction.reply(
+		interaction.editReply(
 			new embeds.embed()
 				.setTitle('Success')
 				.setDescription(`**[${info.videoDetails.title}](${info.videoDetails.video_url})を再生します。**`)
@@ -51,7 +52,7 @@ export async function searchPlayCommand(interaction: StringSelectMenuInteraction
 	} else {
 		queue.addSong(url);
 		const info = await ytdl.getInfo(url);
-		interaction.reply(
+		interaction.editReply(
 			new embeds.embed()
 				.setTitle('Info')
 				.setDescription(`**[${info.videoDetails.title}](${info.videoDetails.video_url})をキューに追加しました。**`)

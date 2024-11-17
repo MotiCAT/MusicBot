@@ -9,6 +9,7 @@ import ytpl from 'ytpl';
 let url: string;
 
 export async function playCommand(interaction: ChatInputCommandInteraction) {
+	await interaction.deferReply();
 	let player = client?.player;
 	if (!queueManager.getQueue(interaction.guild?.id as string)) {
 		queueManager.setQueue(interaction.guild?.id as string, new Queue());
@@ -33,7 +34,6 @@ export async function playCommand(interaction: ChatInputCommandInteraction) {
 
 	// Check if URL is a playlist
 	if (ytpl.validateID(url)) {
-		await interaction.deferReply();
 		const playlist = await ytpl(url, {
 			limit: Infinity
 		});
