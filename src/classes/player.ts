@@ -29,7 +29,7 @@ export class YTPlayer {
 		});
 		this.player = createAudioPlayer();
 		this.queue = queueManager.getQueue(serverId) as Queue;
-		this.volume = 0.1;
+		this.volume = 1;
 		this.player
 			.on('subscribe', () => {
 				this.isPlaying = true;
@@ -52,7 +52,7 @@ export class YTPlayer {
 			inputType: StreamType.WebmOpus,
 			inlineVolume: true
 		});
-		this.resource.volume?.setVolume(this.volume);
+		this.resource.volume?.setVolume(this.volume / 10);
 		this.connection.subscribe(this.player);
 		this.player.play(this.resource);
 	}
