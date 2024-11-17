@@ -27,11 +27,11 @@ export async function searchPlayCommand(interaction: StringSelectMenuInteraction
 
 	url = interaction.values[0];
 	const channel = interaction.member?.voice.channel;
-	if (!url) return interaction.reply(embeds.noUrl);
-	if (!ytdl.validateURL(url)) return interaction.reply(embeds.invaildUrl);
-	if (!channel) return interaction.reply(embeds.voiceChannelJoin);
+	if (!url) return interaction.editReply(embeds.noUrl);
+	if (!ytdl.validateURL(url)) return interaction.editReply(embeds.invaildUrl);
+	if (!channel) return interaction.editReply(embeds.voiceChannelJoin);
 	if (channel.type !== ChannelType.GuildVoice) return;
-	if (!channel.speakable) return interaction.reply(embeds.voiceChannnelPermission);
+	if (!channel.speakable) return interaction.editReply(embeds.voiceChannnelPermission);
 
 	if (!queue.length || !player.isPlaying) {
 		queue.addSong(url);

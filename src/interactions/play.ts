@@ -51,7 +51,7 @@ export async function playCommand(interaction: ChatInputCommandInteraction) {
 		if (!queue.length || !player.isPlaying) {
 			queue.addSong(url);
 			const info = await ytdl.getInfo(url);
-			interaction.reply(
+			interaction.editReply(
 				new embeds.embed()
 					.setTitle('Success')
 					.setDescription(`**[${info.videoDetails.title}](${info.videoDetails.video_url})を再生します。**`)
@@ -67,7 +67,7 @@ export async function playCommand(interaction: ChatInputCommandInteraction) {
 		} else {
 			queue.addSong(url);
 			const info = await ytdl.getInfo(url);
-			interaction.reply(
+			interaction.editReply(
 				new embeds.embed()
 					.setTitle('Info')
 					.setDescription(`**[${info.videoDetails.title}](${info.videoDetails.video_url})をキューに追加しました。**`)
@@ -81,6 +81,6 @@ export async function playCommand(interaction: ChatInputCommandInteraction) {
 			);
 		}
 	} else {
-		interaction.reply(embeds.invaildUrl);
+		interaction.editReply(embeds.invaildUrl);
 	}
 }
