@@ -1,17 +1,11 @@
 import { Queue, queueManager } from '../classes/queue';
-import { client } from '../index';
 import { VoiceState } from 'discord.js';
 
 export async function onVoiceStateUpdate(oldState: VoiceState, newState: VoiceState) {
-	const botId = oldState.client.user?.id;
-	const channel = oldState.channel;
-	if (!botId) return;
+		const oldchannel = oldState.channel;
+		const newchannel = newState.channel;
 
-	if (channel && channel.members.size === 1 && channel.members.has(botId)) {
-		newState.guild.members.me?.voice.disconnect();
-		client.player = undefined;
-		queueManager.deleteQueue(newState.guild.id);
-	}
-
+		console.log(`[INFO] Old Channel: ${oldchannel?.name} | New Channel: ${newchannel?.name}
+        `);
 	if (!queueManager.getQueue(newState.guild.id)) queueManager.setQueue(newState.guild.id, new Queue());
 }

@@ -4,7 +4,7 @@ import { AudioPlayerStatus } from '@discordjs/voice';
 import { Message } from 'discord.js';
 
 export async function resumeCommand(message: Message) {
-	const player = client?.player;
+	const player = client.getPlayer(message.guildId!);
 	if (!player) return message.reply(embeds.videoNotPlaying);
 	if (player.player.state.status === AudioPlayerStatus.Paused) {
 		player.resume();

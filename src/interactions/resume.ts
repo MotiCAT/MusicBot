@@ -4,8 +4,8 @@ import { AudioPlayerStatus } from '@discordjs/voice';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export async function resumeCommand(interaction: ChatInputCommandInteraction) {
-	const player = client?.player;
-	if (typeof player === 'undefined') return interaction.reply(embeds.videoNotPlaying);
+	const player = client.getPlayer(interaction.guildId!);
+	if (!player) return interaction.reply(embeds.videoNotPlaying);
 	if (player.player.state.status === AudioPlayerStatus.Paused) {
 		player.resume();
 		interaction.reply(embeds.videoResumed);

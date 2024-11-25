@@ -27,7 +27,7 @@ async function getCachedInfo(url: string): Promise<videoInfo> {
 }
 
 export async function queueCommand(interaction: ChatInputCommandInteraction) {
-	const player = client?.player;
+	const player = client.getPlayer(interaction.guildId!);
 	await interaction.deferReply();
 	if (!player) return interaction.followUp(embeds.videoNotPlaying);
 

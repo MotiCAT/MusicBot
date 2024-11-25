@@ -8,18 +8,17 @@ import { Message, VoiceBasedChannel } from 'discord.js';
 let url: string;
 
 export async function playCommand(message: Message) {
-	let player = client?.player;
-	if (!queueManager.getQueue(message.guild?.id as string)) {
-		queueManager.setQueue(message.guild?.id as string, new Queue());
+	let player = client.getPlayer(message.guildId!);
+	if (!queueManager.getQueue(message.guild!.id)) {
+		queueManager.setQueue(message.guild!.id, new Queue());
 	}
 	const queue = queueManager.getQueue(message.guild?.id as string) as Queue;
 	if (!player) {
-		client.player = new YTPlayer(
-			message.guild?.id as string,
-			message.member?.voice.channel as VoiceBasedChannel,
-			message.channel.id
+		client.setPlayer(
+			message.guild!.id,
+			new YTPlayer(message.guildId!, message.member!.voice.channel as VoiceBasedChannel, message.channelId)
 		);
-		player = client.player;
+		player = client.getPlayer(message.guildId!) as YTPlayer;
 	}
 	url = message.content.split(' ')[1];
 	if (!url) return message.reply(embeds.noUrl);

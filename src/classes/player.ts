@@ -48,6 +48,7 @@ export class YTPlayer {
 			quality: 'highest',
 			highWaterMark: 32 * 1024 * 1024
 		});
+
 		this.resource = createAudioResource(stream, {
 			inputType: StreamType.WebmOpus,
 			inlineVolume: true
@@ -68,7 +69,7 @@ export class YTPlayer {
 	public stop(): void {
 		this.connection.destroy();
 		queueManager.deleteQueue(this.serverId);
-		client.player = undefined;
+		client.deletePlayer(this.serverId);
 	}
 
 	public skip(): void {
@@ -101,7 +102,7 @@ export class YTPlayer {
 		const channel = client.channels.cache.get(this.messageChannelId);
 		if (!channel || !channel.isTextBased()) return;
 		if (channel.isTextBased() && 'send' in channel) {
-			await channel.send(await getSongInfo(this.queue.currentSong!));
+			await channel.send(await getSongInfo(this.queue.currentSong!, this.serverId));
 		}
 	}
 }

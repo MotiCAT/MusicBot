@@ -4,12 +4,16 @@ import { client } from '../index';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export async function loopCommand(interaction: ChatInputCommandInteraction) {
-	const player = client?.player;
+	const player = client.getPlayer(interaction.guildId!);
 	if (!player) return interaction.reply(embeds.videoNotPlaying);
 	const queue = queueManager.queues.get(interaction.guildId!) as Queue;
 	const settings = interaction.options.getString('mode') as string;
 	if (!settings) {
-		queue.loop === 'none' ? queue.setLoop('queue') : queue.setLoop('none');
+		if (queue.loop === 'none') {
+			queue.setLoop('queue');
+		} else {
+			queue.setLoop('none');
+		}
 	} else if (settings) {
 		switch (settings) {
 			case 'none':

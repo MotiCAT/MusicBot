@@ -3,7 +3,7 @@ import { client } from '../index';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export async function changeVolumeCommand(interaction: ChatInputCommandInteraction) {
-	const player = client?.player;
+	const player = client.getPlayer(interaction.guildId!);
 	if (!player) return interaction.reply(embeds.videoNotPlaying);
 
 	const vol = interaction.options.getInteger('volume');

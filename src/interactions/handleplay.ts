@@ -9,20 +9,19 @@ let url: string;
 
 export async function searchPlayCommand(interaction: StringSelectMenuInteraction) {
 	await interaction.deferReply();
-	let player = client?.player;
-	if (!queueManager.getQueue(interaction.guild?.id as string)) {
-		queueManager.setQueue(interaction.guild?.id as string, new Queue());
+	let player = client.getPlayer(interaction.guildId!);
+	if (!queueManager.getQueue(interaction.guild!.id)) {
+		queueManager.setQueue(interaction.guild!.id, new Queue());
 	}
-	const queue = queueManager.getQueue(interaction.guild?.id as string) as Queue;
+	const queue = queueManager.getQueue(interaction.guild!.id) as Queue;
 	if (!interaction.channel) return;
 	if (!(interaction.member instanceof GuildMember)) return;
 	if (!player) {
-		client.player = new YTPlayer(
-			interaction.guild?.id as string,
-			interaction.member?.voice.channel as VoiceBasedChannel,
-			interaction.channel?.id
+		client.setPlayer(
+			interaction.guildId!,
+			new YTPlayer(interaction.guild!.id, interaction.member.voice.channel as VoiceBasedChannel, interaction.channel.id)
 		);
-		player = client.player;
+		player = client.getPlayer(interaction.guildId!) as YTPlayer;
 	}
 
 	url = interaction.values[0];

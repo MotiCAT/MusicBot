@@ -4,7 +4,7 @@ import { AudioPlayerStatus } from '@discordjs/voice';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export async function pauseCommand(interaction: ChatInputCommandInteraction) {
-	const player = client?.player;
+	const player = client.getPlayer(interaction.guildId!);
 	if (!player) return interaction.reply(embeds.videoNotPlaying);
 
 	if (player.player.state.status === AudioPlayerStatus.Playing) {

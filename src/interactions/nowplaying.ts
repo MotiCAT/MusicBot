@@ -6,9 +6,9 @@ import { ChatInputCommandInteraction } from 'discord.js';
 
 export async function nowplayingCommand(interaction: ChatInputCommandInteraction) {
 	await interaction.deferReply();
-	const player = client?.player;
+	const player = client.getPlayer(interaction.guildId!);
 	if (!player) return interaction.followUp(embeds.videoNotPlaying);
-	const queue = queueManager.getQueue(interaction.guild?.id as string) as Queue;
-	const info = await getSongInfo(queue.currentSong);
+	const queue = queueManager.getQueue(interaction.guild!.id) as Queue;
+	const info = await getSongInfo(queue.currentSong, interaction.guildId!);
 	return interaction.followUp(info);
 }
