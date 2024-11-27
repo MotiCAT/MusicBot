@@ -3,8 +3,8 @@ import { Queue, queueManager } from '../classes/queue';
 import { embeds } from '../embeds';
 import { client } from '../index';
 import ytdl from '@distube/ytdl-core';
+import ytpl from '@distube/ytpl';
 import { ChannelType, VoiceBasedChannel, ChatInputCommandInteraction, GuildMember } from 'discord.js';
-import ytpl from 'ytpl';
 
 let url: string;
 
