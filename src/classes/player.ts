@@ -42,8 +42,12 @@ export class YTPlayer {
 	}
 
 	public play() {
+		let agent = undefined;
+		if (client.useProxy) agent = ytdl.createProxyAgent({ uri: client.getURI() });
+
 		const queue = queueManager.getQueue(this.serverId);
 		const stream = ytdl(ytdl.getURLVideoID(queue?.currentSong as string), {
+			agent: agent ?? undefined,
 			filter: (format) => format.audioCodec === 'opus' && format.container === 'webm',
 			quality: 'highest',
 			highWaterMark: 32 * 1024 * 1024
