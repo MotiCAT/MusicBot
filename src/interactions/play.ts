@@ -3,41 +3,46 @@ import { Queue, queueManager } from '../classes/queue';
 import { embeds } from '../embeds';
 import { client } from '../index';
 import ytdl from '@distube/ytdl-core';
+import ytpl from '@distube/ytpl';
 import { ChannelType, VoiceBasedChannel, ChatInputCommandInteraction, GuildMember } from 'discord.js';
-import ytpl from 'ytpl';
 
 let url: string;
 
 export async function playCommand(interaction: ChatInputCommandInteraction) {
-	let player = client?.player;
-	if (!queueManager.getQueue(interaction.guild?.id as string)) {
-		queueManager.setQueue(interaction.guild?.id as string, new Queue());
+	await interaction.deferReply();
+	let player = client.getPlayer(interaction.guildId!);
+	if (!queueManager.getQueue(interaction.guild!.id)) {
+		queueManager.setQueue(interaction.guild!.id, new Queue());
 	}
-	const queue = queueManager.getQueue(interaction.guild?.id as string) as Queue;
+	const queue = queueManager.getQueue(interaction.guild!.id) as Queue;
 	if (!interaction.channel) return;
 	if (!(interaction.member instanceof GuildMember)) return;
 	if (!player) {
-		client.player = new YTPlayer(
-			interaction.guild?.id as string,
-			interaction.member?.voice.channel as VoiceBasedChannel,
-			interaction.channel?.id
+		client.setPlayer(
+			interaction.guildId!,
+			new YTPlayer(
+				interaction.guild!.id as string,
+				interaction.member.voice.channel as VoiceBasedChannel,
+				interaction.channel.id
+			)
 		);
-		player = client.player;
+		player = client.getPlayer(interaction.guildId!) as YTPlayer;
 	}
 	url = interaction.options.getString('url') as string;
 	const channel = interaction.member?.voice.channel;
 	if (!url) return interaction.reply(embeds.noUrl);
 	if (!channel) return interaction.reply(embeds.voiceChannelJoin);
 	if (channel.type !== ChannelType.GuildVoice) return;
-	if (!channel.joinable) return interaction.reply(embeds.voiceChannnelJoined);
 	if (!channel.speakable) return interaction.reply(embeds.voiceChannnelPermission);
 
 	// Check if URL is a playlist
 	if (ytpl.validateID(url)) {
-		const playlist = await ytpl(url);
+		const playlist = await ytpl(url, {
+			limit: Infinity
+		});
 		for (const video of playlist.items) queue.addSong(video.url);
 
-		interaction.reply(
+		interaction.editReply(
 			new embeds.embed()
 				.setTitle('Playlist Added')
 				.setDescription(`**${playlist.title}** を再生キューに追加しました。`)
@@ -49,7 +54,7 @@ export async function playCommand(interaction: ChatInputCommandInteraction) {
 		if (!queue.length || !player.isPlaying) {
 			queue.addSong(url);
 			const info = await ytdl.getInfo(url);
-			interaction.reply(
+			interaction.editReply(
 				new embeds.embed()
 					.setTitle('Success')
 					.setDescription(`**[${info.videoDetails.title}](${info.videoDetails.video_url})を再生します。**`)
@@ -65,7 +70,7 @@ export async function playCommand(interaction: ChatInputCommandInteraction) {
 		} else {
 			queue.addSong(url);
 			const info = await ytdl.getInfo(url);
-			interaction.reply(
+			interaction.editReply(
 				new embeds.embed()
 					.setTitle('Info')
 					.setDescription(`**[${info.videoDetails.title}](${info.videoDetails.video_url})をキューに追加しました。**`)
@@ -79,6 +84,6 @@ export async function playCommand(interaction: ChatInputCommandInteraction) {
 			);
 		}
 	} else {
-		interaction.reply(embeds.invaildUrl);
+		interaction.editReply(embeds.invaildUrl);
 	}
 }

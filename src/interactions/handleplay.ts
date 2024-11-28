@@ -8,35 +8,34 @@ import { StringSelectMenuInteraction, ChannelType, VoiceBasedChannel, GuildMembe
 let url: string;
 
 export async function searchPlayCommand(interaction: StringSelectMenuInteraction) {
-	let player = client?.player;
-	if (!queueManager.getQueue(interaction.guild?.id as string)) {
-		queueManager.setQueue(interaction.guild?.id as string, new Queue());
+	await interaction.deferReply();
+	let player = client.getPlayer(interaction.guildId!);
+	if (!queueManager.getQueue(interaction.guild!.id)) {
+		queueManager.setQueue(interaction.guild!.id, new Queue());
 	}
-	const queue = queueManager.getQueue(interaction.guild?.id as string) as Queue;
+	const queue = queueManager.getQueue(interaction.guild!.id) as Queue;
 	if (!interaction.channel) return;
 	if (!(interaction.member instanceof GuildMember)) return;
 	if (!player) {
-		client.player = new YTPlayer(
-			interaction.guild?.id as string,
-			interaction.member?.voice.channel as VoiceBasedChannel,
-			interaction.channel?.id
+		client.setPlayer(
+			interaction.guildId!,
+			new YTPlayer(interaction.guild!.id, interaction.member.voice.channel as VoiceBasedChannel, interaction.channel.id)
 		);
-		player = client.player;
+		player = client.getPlayer(interaction.guildId!) as YTPlayer;
 	}
 
 	url = interaction.values[0];
 	const channel = interaction.member?.voice.channel;
-	if (!url) return interaction.reply(embeds.noUrl);
-	if (!ytdl.validateURL(url)) return interaction.reply(embeds.invaildUrl);
-	if (!channel) return interaction.reply(embeds.voiceChannelJoin);
+	if (!url) return interaction.editReply(embeds.noUrl);
+	if (!ytdl.validateURL(url)) return interaction.editReply(embeds.invaildUrl);
+	if (!channel) return interaction.editReply(embeds.voiceChannelJoin);
 	if (channel.type !== ChannelType.GuildVoice) return;
-	if (!channel.joinable) return interaction.reply(embeds.voiceChannnelJoined);
-	if (!channel.speakable) return interaction.reply(embeds.voiceChannnelPermission);
+	if (!channel.speakable) return interaction.editReply(embeds.voiceChannnelPermission);
 
 	if (!queue.length || !player.isPlaying) {
 		queue.addSong(url);
 		const info = await ytdl.getInfo(url);
-		interaction.reply(
+		interaction.editReply(
 			new embeds.embed()
 				.setTitle('Success')
 				.setDescription(`**[${info.videoDetails.title}](${info.videoDetails.video_url})を再生します。**`)
@@ -52,7 +51,7 @@ export async function searchPlayCommand(interaction: StringSelectMenuInteraction
 	} else {
 		queue.addSong(url);
 		const info = await ytdl.getInfo(url);
-		interaction.reply(
+		interaction.editReply(
 			new embeds.embed()
 				.setTitle('Info')
 				.setDescription(`**[${info.videoDetails.title}](${info.videoDetails.video_url})をキューに追加しました。**`)

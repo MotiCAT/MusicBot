@@ -29,7 +29,7 @@ export class YTPlayer {
 		});
 		this.player = createAudioPlayer();
 		this.queue = queueManager.getQueue(serverId) as Queue;
-		this.volume = 0.1;
+		this.volume = 1;
 		this.player
 			.on('subscribe', () => {
 				this.isPlaying = true;
@@ -42,17 +42,22 @@ export class YTPlayer {
 	}
 
 	public play() {
+		let agent = undefined;
+		if (client.useProxy) agent = ytdl.createProxyAgent({ uri: client.getURI() });
+
 		const queue = queueManager.getQueue(this.serverId);
 		const stream = ytdl(ytdl.getURLVideoID(queue?.currentSong as string), {
+			agent: agent ?? undefined,
 			filter: (format) => format.audioCodec === 'opus' && format.container === 'webm',
 			quality: 'highest',
 			highWaterMark: 32 * 1024 * 1024
 		});
+
 		this.resource = createAudioResource(stream, {
 			inputType: StreamType.WebmOpus,
 			inlineVolume: true
 		});
-		this.resource.volume?.setVolume(this.volume);
+		this.resource.volume?.setVolume(this.volume / 10);
 		this.connection.subscribe(this.player);
 		this.player.play(this.resource);
 	}
@@ -68,7 +73,7 @@ export class YTPlayer {
 	public stop(): void {
 		this.connection.destroy();
 		queueManager.deleteQueue(this.serverId);
-		client.player = undefined;
+		client.deletePlayer(this.serverId);
 	}
 
 	public skip(): void {
@@ -94,14 +99,14 @@ export class YTPlayer {
 		if (this.queue.loop === 'queue') this.queue.loopQueue();
 		if (this.queue.loop === 'track') this.queue.loopTrack();
 		this.play();
-		await this.fetchSongData();
+		return await this.fetchSongData();
 	}
 
 	private async fetchSongData() {
 		const channel = client.channels.cache.get(this.messageChannelId);
 		if (!channel || !channel.isTextBased()) return;
 		if (channel.isTextBased() && 'send' in channel) {
-			await channel.send(await getSongInfo(this.queue.currentSong!));
+			await channel.send(await getSongInfo(this.queue.currentSong!, this.serverId));
 		}
 	}
 }

@@ -33,10 +33,6 @@ export async function onInteractionCreate(interaction: BaseInteraction): Promise
 		return;
 	}
 	if (channel.type !== ChannelType.GuildVoice) return;
-	if (!channel.joinable) {
-		interaction.reply(embeds.voiceChannnelJoined);
-		return;
-	}
 	if (!channel.speakable) {
 		interaction.reply(embeds.voiceChannnelPermission);
 		return;
